@@ -3,7 +3,6 @@ import * as cheerio from "cheerio";
 import { Deck, Result } from './types'
 
 const regex = /[^A-Za-z _-]/g;
-const cardNameRegex = /[^A-Za-z /]/g;
 const spaces = / /g;
 
 export const getDecksFromUrl = async (wotcUrl: string): Promise<Result[]> => {

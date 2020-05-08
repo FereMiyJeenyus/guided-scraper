@@ -1,9 +1,9 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import "semantic-ui-css/semantic.min.css"
-import { Header, Container, Grid, Input, Button, TextArea, Form, Divider, List, Modal, GridColumn, Message, Progress } from 'semantic-ui-react'
+import { Header, Container, Grid, Input, Button, Form, Modal, Message, Progress, Tab } from 'semantic-ui-react'
 import './App.css';
 import { getDecksFromUrl } from './scraper'
-import { Result, Card, Deck } from './types'
+import { Result, Card } from './types'
 import DeckList from './DeckList'
 
 const App: React.FC = () => {
@@ -11,6 +11,7 @@ const App: React.FC = () => {
   const [wotcUrl, setWotcUrl] = useState<string>("");
   const [results, setResults] = useState<Result[]>([]);
   const [markup, setMarkup] = useState<string[]>([]);
+  const [cardCounts, setCardCounts] = useState<string[]>([]);
   const [displayedDeck, setDisplayedDeck] = useState<Result>();
   const [displayedDeckIndex, setDisplayedDeckIndex] = useState<number>();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -45,41 +46,41 @@ const App: React.FC = () => {
   }
 
   const generateCardCounts = (results: Result[]) => {
-    const cardCounts: { card: Card, decks: number }[] = []
+    const counts: { card: Card, deckCount: number }[] = []
     results.forEach(r => {
       r.deck.maindeck.forEach(card => {
-        const countRow = cardCounts.find(c => c.card.name === card.name);
+        const countRow = counts.find(c => c.card.name === card.name);
         if (!countRow) {
-          cardCounts.push({
+          counts.push({
             card: { name: card.name, count: card.count, highlighted: false },
-            decks: 1
+            deckCount: 1
           })
         }
         else {
           countRow.card.count += card.count;
-          countRow.decks++;
+          countRow.deckCount++;
         }
       })
 
       r.deck.sideboard.forEach(card => {
-        const countRow = cardCounts.find(c => c.card.name === card.name);
+        const countRow = counts.find(c => c.card.name === card.name);
         if (!countRow) {
-          cardCounts.push({
+          counts.push({
             card: { name: card.name, count: card.count, highlighted: false },
-            decks: 1
+            deckCount: 1
           })
         }
         else {
           countRow.card.count += card.count;
           if (!r.deck.maindeck.find(c => c.name === card.name)) {
-            countRow.decks++;
+            countRow.deckCount++;
           }
         }
       })
     })
 
-    cardCounts.sort((a, b) => b.card.count - a.card.count)
-    //TODO make this visible somewhere
+    counts.sort((a, b) => b.card.count - a.card.count)
+    setCardCounts(counts.map(c => `${c.card.count} cop${c.card.count > 1 ? 'ies' : 'y'} of ${c.card.name} in ${c.deckCount} deck${c.deckCount > 1 ? 's' : ''}`))
   }
 
 
@@ -95,38 +96,7 @@ const App: React.FC = () => {
     }
   }
 
-  const toggleCardHighlight = (card: Card) => {
-    const { deck } = displayedDeck!
-    for (const c of deck.maindeck) {
-      if (c.name === card.name) {
-        c.highlighted = !c.highlighted
-      }
-    }
-    for (const c of deck.sideboard) {
-      if (c.name === card.name) {
-        c.highlighted = !c.highlighted
-      }
-    }
-    setDisplayedDeck({ ...displayedDeck!, deck })
-  }
-
-  const cards = displayedDeck && displayedDeck.deck.maindeck.map((card: Card) => {
-    return (
-      <List.Item key={card.name} onClick={() => toggleCardHighlight(card)} className={card.highlighted ? 'highlight' : ''}>
-        {card.count} {card.name}
-      </List.Item>
-    )
-  })
-
-  const sideboardCards = displayedDeck && displayedDeck.deck.sideboard.map((card: Card) => {
-    return (
-      <List.Item key={card.name} onClick={() => toggleCardHighlight(card)} className={card.highlighted ? 'highlight' : ''}>
-        {card.count} {card.name}
-      </List.Item>
-    )
-  })
-
-  const setNextDeck = () => {
+  const goToNextDeck = () => {
     if (!displayedDeck) {
       return
     }
@@ -149,7 +119,7 @@ const App: React.FC = () => {
     }
   }
 
-  const setPreviousDeck = () => {
+  const goToPreviousDeck = () => {
     if (!displayedDeck) {
       return
     }
@@ -173,19 +143,24 @@ const App: React.FC = () => {
     }
   }
 
-  const handleSetArchetype = (e: ChangeEvent, data: any) => {
-    const { value } = data
-    const deck: Result = { ...displayedDeck!, archetype: value as string }
-    console.log(deck)
-    setDisplayedDeck(deck)
-  }
-
-
-  const handleKeyPress = (e: any, data: any) => {
-    if (e.key === 'Enter') {
-      setNextDeck();
+  const panes = [
+    {
+      menuItem: 'Markdown', pane:
+        <Tab.Pane>
+          <Form>
+            <Form.TextArea value={markup?.join("\r\n")} style={{ height: 500 }} />
+          </Form>
+        </Tab.Pane>
+    },
+    {
+      menuItem: 'Card Counts', pane:
+        <Tab.Pane>
+          <Form>
+            <Form.TextArea value={cardCounts?.join("\r\n")} style={{ height: 500 }} />
+          </Form>
+        </Tab.Pane>
     }
-  }
+  ]
 
   return (
     <Container className="App">
@@ -205,7 +180,7 @@ const App: React.FC = () => {
             <Button onClick={scrape} content="Scrape" />
           </Grid.Column>
           <Grid.Column width={2} textAlign="left">
-            <Button onClick={() => (setModalOpen(true))} content="Start" />
+            <Button onClick={() => (setModalOpen(true))} content="Walkthrough" />
           </Grid.Column>
         </Grid.Row>
 
@@ -216,9 +191,7 @@ const App: React.FC = () => {
                 <p>There was an error while attempting to scrape results. Please try again later</p>
               </Message>
             }
-            <Form>
-              <Form.TextArea value={markup?.join("\r\n")} style={{ height: 500 }} />
-            </Form>
+            <Tab panes={panes} renderActiveOnly={false} />
           </Grid.Column>
         </Grid.Row>
       </Grid>
@@ -230,32 +203,7 @@ const App: React.FC = () => {
         closeIcon>
         <Modal.Content>
           {displayedDeck &&
-            <Grid width={16} >
-              <Grid.Row>
-                <Grid.Column width={12}>
-                  <Input label="Archetype" value={displayedDeck.archetype} onChange={handleSetArchetype} onKeyPress={handleKeyPress} />
-                </Grid.Column>
-                <Grid.Column width={2}>
-                  <Button onClick={setPreviousDeck} content="Previous" />
-                </Grid.Column>
-                <Grid.Column width={2}>
-                  <Button onClick={setNextDeck} content="Next" />
-                </Grid.Column>
-              </Grid.Row>
-
-              <Grid.Row>
-                <Grid.Column width={4}>
-                  <List>
-                    {cards}
-                  </List>
-                </Grid.Column>
-                <Grid.Column width={4}>
-                  <List>
-                    {sideboardCards}
-                  </List>
-                </Grid.Column>
-              </Grid.Row>
-            </Grid>
+            <DeckList result={displayedDeck} goToNextDeck={goToNextDeck} goToPreviousDeck={goToPreviousDeck} setDisplayedDeck={setDisplayedDeck} />
           }
           <Progress value={displayedDeckIndex} total={results.length} progress='ratio' style={{ marginTop: '1em', marginBottom: 0 }} />
         </Modal.Content>
