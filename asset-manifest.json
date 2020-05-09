@@ -6,20 +6,20 @@
     "runtime-main.js": "/guided-scraper/static/js/runtime-main.75ef738d.js",
     "runtime-main.js.map": "/guided-scraper/static/js/runtime-main.75ef738d.js.map",
     "static/css/2.d702d4fd.chunk.css": "/guided-scraper/static/css/2.d702d4fd.chunk.css",
-    "static/js/2.ade08435.chunk.js": "/guided-scraper/static/js/2.ade08435.chunk.js",
-    "static/js/2.ade08435.chunk.js.map": "/guided-scraper/static/js/2.ade08435.chunk.js.map",
+    "static/js/2.60e7037e.chunk.js": "/guided-scraper/static/js/2.60e7037e.chunk.js",
+    "static/js/2.60e7037e.chunk.js.map": "/guided-scraper/static/js/2.60e7037e.chunk.js.map",
     "index.html": "/guided-scraper/index.html",
-    "precache-manifest.18c46751e402a3c594771b4b9451732a.js": "/guided-scraper/precache-manifest.18c46751e402a3c594771b4b9451732a.js",
+    "precache-manifest.3ec65f58584071175b7a81fec66e6165.js": "/guided-scraper/precache-manifest.3ec65f58584071175b7a81fec66e6165.js",
     "service-worker.js": "/guided-scraper/service-worker.js",
     "static/css/2.d702d4fd.chunk.css.map": "/guided-scraper/static/css/2.d702d4fd.chunk.css.map",
     "static/css/main.68330f75.chunk.css.map": "/guided-scraper/static/css/main.68330f75.chunk.css.map",
-    "static/js/2.ade08435.chunk.js.LICENSE.txt": "/guided-scraper/static/js/2.ade08435.chunk.js.LICENSE.txt",
+    "static/js/2.60e7037e.chunk.js.LICENSE.txt": "/guided-scraper/static/js/2.60e7037e.chunk.js.LICENSE.txt",
     "static/media/semantic.min.css": "/guided-scraper/static/media/outline-icons.ef60a4f6.woff"
   },
   "entrypoints": [
     "static/js/runtime-main.75ef738d.js",
     "static/css/2.d702d4fd.chunk.css",
-    "static/js/2.ade08435.chunk.js",
+    "static/js/2.60e7037e.chunk.js",
     "static/css/main.68330f75.chunk.css",
     "static/js/main.e73ab1d2.chunk.js"
   ]
