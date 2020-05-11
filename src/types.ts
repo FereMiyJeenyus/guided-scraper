@@ -16,3 +16,5 @@ export interface Result {
     duplicatePilot: boolean;
     archetype: string;
 }
+
+export type Color = "W" | "U" | "B" | "R" | "G"
