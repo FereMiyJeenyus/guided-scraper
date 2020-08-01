@@ -110,7 +110,6 @@ const App: React.FC = () => {
     mu[index] = generateMarkupLine(displayedDeck)
     setMarkup(mu)
     if (index + 2 < results.length) {
-      console.log(results[index])
       setDisplayedDeck(results[index + 1])
       setDisplayedDeckIndex(index + 1);
     }
@@ -134,7 +133,6 @@ const App: React.FC = () => {
     setMarkup(mu)
 
     if (index !== 0) {
-      console.log(results[index - 1])
       setDisplayedDeck(results[index - 1])
       setDisplayedDeckIndex(index - 1);
     }
